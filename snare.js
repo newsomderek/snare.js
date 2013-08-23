@@ -58,14 +58,22 @@ snare.setup = function(options) {
 
                 var trapped = false;
 
-                if( that.inside(preyDims.x, preyDims.y, dims.x, dims.y, dims.width, dims.height) )
-                    trapped = true;
-                if( that.inside(preyDims.x, preyDims.height, dims.x, dims.y, dims.width, dims.height) )
-                    trapped = true;
-                if( that.inside(preyDims.width, preyDims.y, dims.x, dims.y, dims.width, dims.height) )
-                    trapped = true;
-                if( that.inside(preyDims.width, preyDims.height, dims.x, dims.y, dims.width, dims.height) )
-                    trapped = true;
+                var points = [
+                    ['x', 'y', 'y','width'], ['x', 'height', 'x', 'y'],
+                    ['width', 'y', 'x', y], ['width', 'height', 'x', 'y']
+                ];
+
+                for(var idx in points) {
+                    if( that.inside(
+                            preyDims[points[idx][0]],
+                            preyDims[points[idx][1]],
+                            dims[points[idx][2]],
+                            dims[points[idx][3]],
+                            dims.width, dims.height) ) {
+                        trapped = true;
+                        break;
+                    }
+                }
 
                 if(trapped)
                     $(this).addClass('snare-trapped');
