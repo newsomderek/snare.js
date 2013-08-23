@@ -49,12 +49,10 @@ snare.setup = function(options) {
 
             $('.'+this.prey).each(function() {
 
-                var dims = that.dimensions($('#'+that.id));
-                var preyDims = that.dimensions(this);
+                var dims = that.dims($('#'+that.id));
+                var preyDims = that.dims(this);
 
                 if(that.dev) {
-                    //console.log('dim: ' + JSON.stringify(dims));
-                    //console.log('prey: ' + JSON.stringify(preyDims));
                     $('#snare-dev').html('<div>selection: '+JSON.stringify(dims)+'</div>');
                 }
 
@@ -81,22 +79,14 @@ snare.setup = function(options) {
             else
                 return false;
         },
-        'dimensions': function(el) {
+        'dims': function(el) {
             var pos = $(el).offset();
 
-            var height = parseInt($(el).height());
-            var paddedHeight = height + parseInt($(el).css('padding-top')) +
-                parseInt($(el).css('padding-bottom'));
-
-            var width = parseInt($(el).width());
-            var paddedWidth = width + parseInt($(el).css('padding-left')) +
-                parseInt($(el).css('padding-right'));
-
             return {
-                'x': parseInt(pos.left),
-                'y': parseInt(pos.top),
-                'width': width > paddedWidth ? width : paddedWidth,
-                'height': height > paddedHeight ? height : paddedHeight
+                'x': parseInt(pos.left, 10),
+                'y': parseInt(pos.top, 10),
+                'width': $(el).outerWidth(),
+                'height': $(el).outerHeight()
             };
         },
         'burn': function() {
@@ -117,7 +107,7 @@ snare.setup = function(options) {
     });
 
     $(document).mousemove(function(e) {
-           snare.rope.update(e.which === 1, e.pageX, e.pageY);
+        snare.rope.update(e.which === 1, e.pageX, e.pageY);
     });
 
 };
