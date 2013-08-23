@@ -1,0 +1,43 @@
+<!DOCTYP html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>snare.js</title>
+
+        <style>
+            body {
+               font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+               font-weight: 300;
+            }
+
+            .description {
+                margin-bottom: 30px;
+            }
+
+            .snare-prey {
+                display: inline-block;
+                padding: 50px 50px;
+                margin: 30px;
+                background-color: #aaa;
+                color: white;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>snare.js</h1>
+        <div class="description">Mouse drag selection for the minimalist.</div>
+
+        <div class="snare-prey">One</div>
+        <div class="snare-prey">Two</div>
+        <div class="snare-prey">Three</div>
+        <div class="snare-prey">Four</div>
+        <div class="snare-prey">Five</div>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+        <script src="snare.js"></script>
+
+        <script type="text/javascript">
+            snare.setup();
+        </script>
+    </body>
+</html>
