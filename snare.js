@@ -1,17 +1,18 @@
 var snare = {};
 
-snare.setup = function() {
+snare.setup = function(options) {
 
     snare.rope = {
         'enabled': false,
+        'dev': false,
         'origin': {'x': 0, 'y': 0},
         'id': 'snare-rope',
         'prey': 'snare-prey',
         'css': {
-                'position': 'absolute',
-                'top': '0px',
-                'left': '0px',
-                'border': '2px solid #666',
+            'position': 'absolute',
+            'top': '0px',
+            'left': '0px',
+            'border': '2px solid #666'
         },
         'update': function(mouseDown, x, y) {
             if(mouseDown) {
@@ -51,10 +52,37 @@ snare.setup = function() {
                 var dims = that.dimensions($('#'+that.id));
                 var preyDims = that.dimensions(this);
 
+                if(that.dev) {
+                    //console.log('dim: ' + JSON.stringify(dims));
+                    //console.log('prey: ' + JSON.stringify(preyDims));
+                    $('#snare-dev').html('<div>selection: '+JSON.stringify(dims)+'</div>');
+                }
+
+                var trapped = false;
+
+                if( that.inside(preyDims.x, preyDims.y, dims.x, dims.y, dims.width, dims.height) )
+                    trapped = true;
+                if( that.inside(preyDims.x, preyDims.height, dims.x, dims.y, dims.width, dims.height) )
+                    trapped = true;
+                if( that.inside(preyDims.width, preyDims.y, dims.x, dims.y, dims.width, dims.height) )
+                    trapped = true;
+                if( that.inside(preyDims.width, preyDims.height, dims.x, dims.y, dims.width, dims.height) )
+                    trapped = true;
+
+                if(trapped)
+                    $(this).addClass('snare-trapped');
+                else
+                    $(this).removeClass('snare-trapped');
             });
         },
+        'inside': function(x, y, left, top, right, bottom) {
+            if(x > left && x < right && y > top && y < bottom)
+                return true;
+            else
+                return false;
+        },
         'dimensions': function(el) {
-            var pos = $(el).position();
+            var pos = $(el).offset();
 
             var height = parseInt($(el).height());
             var paddedHeight = height + parseInt($(el).css('padding-top')) +
@@ -75,6 +103,13 @@ snare.setup = function() {
             $('#'+this.id).remove();
         }
     };
+
+    options = options || {};
+    $.extend(snare.rope, options);
+
+    if(options.dev) {
+        $('<div id="snare-dev" />').appendTo('body').css({'position': 'absolute', 'bottom': '10px'});
+    }
 
     $(document).mouseup(function(e) {
         snare.rope.enabled = false;
