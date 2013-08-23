@@ -60,7 +60,7 @@ snare.setup = function(options) {
 
                 var points = [
                     ['x', 'y', 'y','width'], ['x', 'height', 'x', 'y'],
-                    ['width', 'y', 'x', y], ['width', 'height', 'x', 'y']
+                    ['width', 'y', 'x', 'y'], ['width', 'height', 'x', 'y']
                 ];
 
                 for(var idx in points) {
