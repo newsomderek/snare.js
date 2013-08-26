@@ -4,7 +4,6 @@ snare.setup = function(options) {
 
     snare.rope = {
         'enabled': false,
-        'dev': false,
         'origin': {'x': 0, 'y': 0},
         'id': 'snare-rope',
         'prey': 'snare-prey',
@@ -17,8 +16,9 @@ snare.setup = function(options) {
         },
         'shiftKeyPressed': false,
         'escKeyPressed': false,
+        'mouseStartOnPrey': false,
         'update': function(mouseDown, x, y) {
-            if(mouseDown) {
+            if(mouseDown && !this.mouseStartOnPrey) {
                if(this.enabled) {
                    if(x < this.origin.x) {
                        $('#'+this.id).css('left', x).css('width', this.origin.x - x);
@@ -42,12 +42,14 @@ snare.setup = function(options) {
                    this.css.left = x + 'px';
 
                    $('<div id="'+this.id+'" />').appendTo('body').css(this.css);
+
+                   this.check(x, y, true)
                }
 
                this.check(x, y);
             }
         },
-        'check': function(x, y) {
+        'check': function(x, y, firstCheck) {
             var that = this;
 
             $('.'+this.prey).each(function() {
@@ -105,9 +107,16 @@ snare.setup = function(options) {
     options = options || {};
     $.extend(snare.rope, options);
 
-    if(options.dev) {
-        $('<div id="snare-dev" />').appendTo('body').css({'position': 'absolute', 'bottom': '10px'});
-    }
+    $('.'+snare.rope.prey).mousedown(function(e) {
+        snare.rope.mouseStartOnPrey = true;
+        snare.rope.enabled = true;
+    }).mouseup(function(e) {
+        if(snare.rope.shiftKeyPressed && $(e.target).hasClass(snare.rope.trappedClass)) {
+            $(e.target).removeClass(snare.rope.trappedClass);
+        } else if(snare.rope.shiftKeyPressed) {
+            $(e.target).addClass(snare.rope.trappedClass);
+        }
+    });
 
     $(document).keydown(function(e) {
         // activate shift key
@@ -129,7 +138,15 @@ snare.setup = function(options) {
     });
 
     $(document).mouseup(function(e) {
+        // clear out selections if mouse clicked and wasn't selecting trying to select
+        if(!snare.rope.enabled) {
+            $('.'+snare.rope.trappedClass).each(function() {
+                $(this).removeClass(snare.rope.trappedClass);
+            });
+        }
+
         snare.rope.enabled = false;
+        snare.rope.mouseStartOnPrey = false;
         snare.rope.burn();
 
         if(snare.rope.shiftKeyPressed) {
