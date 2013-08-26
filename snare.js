@@ -111,7 +111,7 @@ snare.setup = function(options) {
 
     $(document).keydown(function(e) {
         // activate shift key
-        if(e.which === 16) {
+        if(e.which === 16 || e.which === 17 || e.which === 91 || e.which == 93) {
             snare.rope.shiftKeyPressed = true
         } else if(e.which === 27 && !snare.rope.escKeyPressed) { // escape key
             snare.rope.escKeyPressed = true;
@@ -121,7 +121,7 @@ snare.setup = function(options) {
         }
     }).keyup(function(e) {
         // de-activate shift key
-        if(e.which === 16 && !snare.rope.enabled) {
+        if((e.which === 16 || e.which === 17 || e.which === 91 || e.which == 93) && !snare.rope.enabled) {
             snare.rope.shiftKeyPressed = false;
         } else if(e.which === 27) { // escape key
             snare.rope.escKeyPressed = false;
