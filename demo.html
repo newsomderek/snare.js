@@ -6,8 +6,8 @@
 
         <style>
             body {
-               font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-               font-weight: 300;
+                font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+                font-weight: 300;
             }
 
             .description {
@@ -23,7 +23,20 @@
             }
 
             .snare-trapped {
-                border: 3px solid red;
+                background-color: #AFDCEB;
+            }
+
+            * {
+                -moz-user-select: -moz-none;
+                -khtml-user-select: none;
+                -webkit-user-select: none;
+
+                /*
+                Introduced in IE 10.
+                See http://ie.microsoft.com/testdrive/HTML5/msUserSelect/
+                */
+                -ms-user-select: none;
+                user-select: none;
             }
         </style>
     </head>
@@ -35,13 +48,12 @@
         <div class="snare-prey">Two</div>
         <div class="snare-prey">Three</div>
         <div class="snare-prey">Four</div>
-        <div class="snare-prey">Five</div>
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script src="snare.js"></script>
 
         <script type="text/javascript">
-            snare.setup({'dev': true});
+            snare.setup();
         </script>
     </body>
 </html>
