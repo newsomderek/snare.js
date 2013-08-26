@@ -8,12 +8,15 @@ snare.setup = function(options) {
         'origin': {'x': 0, 'y': 0},
         'id': 'snare-rope',
         'prey': 'snare-prey',
+        'trappedClass': 'snare-trapped',
         'css': {
             'position': 'absolute',
             'top': '0px',
             'left': '0px',
             'border': '2px solid #666'
         },
+        'shiftKeyPressed': false,
+        'escKeyPressed': false,
         'update': function(mouseDown, x, y) {
             if(mouseDown) {
                if(this.enabled) {
@@ -48,54 +51,51 @@ snare.setup = function(options) {
             var that = this;
 
             $('.'+this.prey).each(function() {
+                var collided = that.collision($('#'+that.id), $(this));
 
-                var dims = that.dims($('#'+that.id));
-                var preyDims = that.dims(this);
+                if(that.shiftKeyPressed) {
+                    if(collided && !$(this).hasClass('snare-shift') && $(this).hasClass(that.trappedClass)) {
+                        $(this).removeClass(that.trappedClass);
+                        $(this).addClass('snare-shift');
+                    } else if(collided && !$(this).hasClass('snare-shift')) {
+                        $(this).addClass(that.trappedClass);
+                        $(this).addClass('snare-shift');
+                    }
 
-                if(that.dev) {
-                    $('#snare-dev').html('<div>selection: '+JSON.stringify(dims)+'</div>');
-                }
+                    if(!collided && $(this).hasClass('snare-shift')) {
+                        $(this).removeClass('snare-shift');
 
-                var trapped = false;
-
-                var points = [
-                    ['x', 'y', 'y','width'], ['x', 'height', 'x', 'y'],
-                    ['width', 'y', 'x', 'y'], ['width', 'height', 'x', 'y']
-                ];
-
-                for(var idx in points) {
-                    if( that.inside(
-                            preyDims[points[idx][0]],
-                            preyDims[points[idx][1]],
-                            dims[points[idx][2]],
-                            dims[points[idx][3]],
-                            dims.width, dims.height) ) {
-                        trapped = true;
-                        break;
+                        if($(this).hasClass(that.trappedClass)) {
+                            $(this).removeClass(that.trappedClass);
+                        } else {
+                            $(this).addClass(that.trappedClass);
+                        }
+                    }
+                } else {
+                    if(collided) {
+                        $(this).addClass(that.trappedClass);
+                    } else {
+                        $(this).removeClass(that.trappedClass);
                     }
                 }
-
-                if(trapped)
-                    $(this).addClass('snare-trapped');
-                else
-                    $(this).removeClass('snare-trapped');
             });
         },
-        'inside': function(x, y, left, top, right, bottom) {
-            if(x > left && x < right && y > top && y < bottom)
-                return true;
-            else
-                return false;
-        },
-        'dims': function(el) {
-            var pos = $(el).offset();
+        'collision': function(div1, div2) {
+            var x1 = div1.offset().left;
+            var y1 = div1.offset().top;
+            var h1 = div1.outerHeight();
+            var w1 = div1.outerWidth();
+            var b1 = y1 + h1;
+            var r1 = x1 + w1;
+            var x2 = div2.offset().left;
+            var y2 = div2.offset().top;
+            var h2 = div2.outerHeight();
+            var w2 = div2.outerWidth();
+            var b2 = y2 + h2;
+            var r2 = x2 + w2;
 
-            return {
-                'x': parseInt(pos.left, 10),
-                'y': parseInt(pos.top, 10),
-                'width': $(el).outerWidth(),
-                'height': $(el).outerHeight()
-            };
+            if (b1 < y2 || y1 > b2 || r1 < x2 || x1 > r2) return false;
+            return true;
         },
         'burn': function() {
             $('#'+this.id).remove();
@@ -109,9 +109,37 @@ snare.setup = function(options) {
         $('<div id="snare-dev" />').appendTo('body').css({'position': 'absolute', 'bottom': '10px'});
     }
 
+    $(document).keydown(function(e) {
+        // activate shift key
+        if(e.which === 16) {
+            snare.rope.shiftKeyPressed = true
+        } else if(e.which === 27 && !snare.rope.escKeyPressed) { // escape key
+            snare.rope.escKeyPressed = true;
+            $('.snare-trapped').each(function() {
+                $(this).removeClass(snare.rope.trappedClass);
+            });
+        }
+    }).keyup(function(e) {
+        // de-activate shift key
+        if(e.which === 16 && !snare.rope.enabled) {
+            snare.rope.shiftKeyPressed = false;
+        } else if(e.which === 27) { // escape key
+            snare.rope.escKeyPressed = false;
+        }
+    });
+
     $(document).mouseup(function(e) {
         snare.rope.enabled = false;
         snare.rope.burn();
+
+        if(snare.rope.shiftKeyPressed) {
+            // undo any shift keyed items
+            $('.snare-shift').each(function() {
+                $(this).removeClass('snare-shift');
+            });
+        } else {
+            snare.rope.shiftKeyPressed = false;
+        }
     });
 
     $(document).mousemove(function(e) {
