@@ -101,6 +101,15 @@ snare.setup = function(options) {
         },
         'burn': function() {
             $('#'+this.id).remove();
+        },
+        'getPrey': function() {
+            var prey = [];
+
+            $('.'+this.trappedClass).each(function() {
+                prey.push($(this));
+            });
+
+            return prey;
         }
     };
 
