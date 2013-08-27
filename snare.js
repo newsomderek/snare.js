@@ -3,6 +3,17 @@ var snare = {};
 snare.setup = function(options) {
 
     snare.rope = {
+        'enabled': true,
+        'enable': function() {
+            this.enabled = true;
+        },
+        'disable': function() {
+            this.enabled = false;
+            var that = this;
+            $('.'+this.trappedClass).each(function() {
+                $(this).removeClass(that.trappedClass);
+            });
+        },
         'inProgress': false,
         'origin': {'x': 0, 'y': 0},
         'id': 'snare-rope',
@@ -120,9 +131,9 @@ snare.setup = function(options) {
         snare.rope.mouseStartOnPrey = true;
         snare.rope.inProgress = true;
     }).mouseup(function(e) {
-        if(snare.rope.shiftKeyPressed && $(e.target).hasClass(snare.rope.trappedClass)) {
+        if(snare.rope.shiftKeyPressed && $(e.target).hasClass(snare.rope.trappedClass) && snare.rope.enabled) {
             $(e.target).removeClass(snare.rope.trappedClass);
-        } else if(snare.rope.shiftKeyPressed) {
+        } else if(snare.rope.shiftKeyPressed && snare.rope.enabled) {
             $(e.target).addClass(snare.rope.trappedClass);
         }
     });
@@ -147,8 +158,9 @@ snare.setup = function(options) {
     });
 
     $(document).mouseup(function(e) {
+
         // clear out selections if mouse clicked and wasn't selecting trying to select
-        if(!snare.rope.inProgress) {
+        if(!snare.rope.inProgress && !snare.rope.shiftKeyPressed) {
             $('.'+snare.rope.trappedClass).each(function() {
                 $(this).removeClass(snare.rope.trappedClass);
             });
@@ -169,7 +181,9 @@ snare.setup = function(options) {
     });
 
     $(document).mousemove(function(e) {
-        snare.rope.update(e.which === 1, e.pageX, e.pageY);
+        if(snare.rope.enabled) {
+            snare.rope.update(e.which === 1, e.pageX, e.pageY);
+        }
     });
 
 };
