@@ -3,7 +3,7 @@ var snare = {};
 snare.setup = function(options) {
 
     snare.rope = {
-        'enabled': false,
+        'inProgress': false,
         'origin': {'x': 0, 'y': 0},
         'id': 'snare-rope',
         'prey': 'snare-prey',
@@ -19,7 +19,7 @@ snare.setup = function(options) {
         'mouseStartOnPrey': false,
         'update': function(mouseDown, x, y) {
             if(mouseDown && !this.mouseStartOnPrey) {
-               if(this.enabled) {
+               if(this.inProgress) {
                    if(x < this.origin.x) {
                        $('#'+this.id).css('left', x).css('width', this.origin.x - x);
                    } else {
@@ -33,7 +33,7 @@ snare.setup = function(options) {
                    }
 
                } else {
-                   this.enabled = true;
+                   this.inProgress = true;
 
                    this.origin.x = x;
                    this.origin.y = y;
@@ -102,14 +102,14 @@ snare.setup = function(options) {
         'burn': function() {
             $('#'+this.id).remove();
         },
-        'getPrey': function() {
-            var prey = [];
+        'getTrapped': function() {
+            var trapped = [];
 
             $('.'+this.trappedClass).each(function() {
-                prey.push($(this));
+                trapped.push($(this));
             });
 
-            return prey;
+            return trapped;
         }
     };
 
@@ -118,7 +118,7 @@ snare.setup = function(options) {
 
     $('.'+snare.rope.prey).mousedown(function(e) {
         snare.rope.mouseStartOnPrey = true;
-        snare.rope.enabled = true;
+        snare.rope.inProgress = true;
     }).mouseup(function(e) {
         if(snare.rope.shiftKeyPressed && $(e.target).hasClass(snare.rope.trappedClass)) {
             $(e.target).removeClass(snare.rope.trappedClass);
@@ -139,7 +139,7 @@ snare.setup = function(options) {
         }
     }).keyup(function(e) {
         // de-activate shift key
-        if((e.which === 16 || e.which === 17 || e.which === 91 || e.which == 93) && !snare.rope.enabled) {
+        if((e.which === 16 || e.which === 17 || e.which === 91 || e.which == 93) && !snare.rope.inProgress) {
             snare.rope.shiftKeyPressed = false;
         } else if(e.which === 27) { // escape key
             snare.rope.escKeyPressed = false;
@@ -148,13 +148,13 @@ snare.setup = function(options) {
 
     $(document).mouseup(function(e) {
         // clear out selections if mouse clicked and wasn't selecting trying to select
-        if(!snare.rope.enabled) {
+        if(!snare.rope.inProgress) {
             $('.'+snare.rope.trappedClass).each(function() {
                 $(this).removeClass(snare.rope.trappedClass);
             });
         }
 
-        snare.rope.enabled = false;
+        snare.rope.inProgress = false;
         snare.rope.mouseStartOnPrey = false;
         snare.rope.burn();
 
