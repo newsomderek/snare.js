@@ -16,6 +16,7 @@ snare.setup = function(options) {
         },
         'inProgress': false,
         'origin': {'x': 0, 'y': 0},
+        'parent': document,
         'id': 'snare-rope',
         'prey': 'snare-prey',
         'trappedClass': 'snare-trapped',
@@ -180,7 +181,7 @@ snare.setup = function(options) {
         }
     });
 
-    $(document).mousemove(function(e) {
+    $(snare.rope.parent).mousemove(function(e) {
         if(snare.rope.enabled) {
             snare.rope.update(e.which === 1, e.pageX, e.pageY);
         }
