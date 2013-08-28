@@ -179,11 +179,33 @@ snare.setup = function(options) {
         } else {
             snare.rope.shiftKeyPressed = false;
         }
+
+        // enable text selection
+        var cssUserSelect = {
+            '-moz-user-select': 'text',
+            '-khtml-user-select': 'auto',
+            '-webkit-user-select': 'auto',
+            '-ms-user-select': 'auto',
+            'user-select': 'auto'
+        };
+
+        $(snare.rope.parent === document ? 'body' : snare.rope.parent).css(cssUserSelect);
     });
 
     $(snare.rope.parent).mousemove(function(e) {
         if(snare.rope.enabled) {
             snare.rope.update(e.which === 1, e.pageX, e.pageY);
+
+            // disable text selection
+            var cssUserSelect = {
+                '-moz-user-select': '-moz-none',
+                '-khtml-user-select': 'none',
+                '-webkit-user-select': 'none',
+                '-ms-user-select': 'none',
+                'user-select': 'none'
+            };
+
+            $(snare.rope.parent === document ? 'body' : snare.rope.parent).css(cssUserSelect);
         }
     });
 
