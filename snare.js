@@ -15,6 +15,7 @@ snare.setup = function(options) {
             });
         },
         'inProgress': false,
+        'mouseDown': false, // stupid firefox
         'origin': {'x': 0, 'y': 0},
         'parent': document,
         'id': 'snare-rope',
@@ -29,8 +30,8 @@ snare.setup = function(options) {
         'shiftKeyPressed': false,
         'escKeyPressed': false,
         'mouseStartOnPrey': false,
-        'update': function(mouseDown, x, y) {
-            if(mouseDown && !this.mouseStartOnPrey) {
+        'update': function(x, y) {
+            if(this.mouseDown && !this.mouseStartOnPrey) {
                if(this.inProgress) {
                    if(x < this.origin.x) {
                        $('#'+this.id).css('left', x).css('width', this.origin.x - x);
@@ -159,6 +160,7 @@ snare.setup = function(options) {
     });
 
     $(document).mouseup(function(e) {
+        snare.rope.mouseDown = false;
 
         // clear out selections if mouse clicked and wasn't selecting trying to select
         if(!snare.rope.inProgress && !snare.rope.shiftKeyPressed) {
@@ -192,9 +194,13 @@ snare.setup = function(options) {
         $(snare.rope.parent === document ? 'body' : snare.rope.parent).css(cssUserSelect);
     });
 
-    $(snare.rope.parent).mousemove(function(e) {
+    $(snare.rope.parent).bind('mousedown', function() {
+        snare.rope.mouseDown = true;
+    });
+
+    $(snare.rope.parent).bind('mousemove', function(e) {
         if(snare.rope.enabled) {
-            snare.rope.update(e.which === 1, e.pageX, e.pageY);
+            snare.rope.update(e.pageX, e.pageY);
 
             // disable text selection
             var cssUserSelect = {
